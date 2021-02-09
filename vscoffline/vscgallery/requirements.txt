@@ -1,5 +1,6 @@
 logzero
 requests
 falcon
+falcon_cors
 gunicorn
 watchdog

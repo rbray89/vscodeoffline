@@ -1,5 +1,6 @@
 import os, sys, time, json, glob
 import falcon
+from falcon_cors import CORS
 from logzero import logger as log
 from wsgiref import simple_server
 from watchdog.observers.polling import PollingObserver
@@ -407,7 +408,12 @@ observer = PollingObserver()
 observer.schedule(ArtifactChangedHandler(vscgallery), '/artifacts/', recursive=False)
 observer.start()
 
-application = falcon.API()
+application = falcon.API(middleware=[CORS(
+    allow_all_origins=True,
+    allow_all_headers=True,
+    allow_all_methods=True,
+).middleware])
+
 application.add_route('/api/update/{platform}/{buildquality}/{commitid}', VSCUpdater())
 application.add_route('/commit:{commitid}/{platform}/{buildquality}', VSCBinaryFromCommitId())
 application.add_route('/extensions/workspaceRecommendations.json.gz', VSCRecommendations()) # Why no compress??
